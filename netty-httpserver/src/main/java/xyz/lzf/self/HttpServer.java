@@ -15,6 +15,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import xyz.lzf.self.handler.HttpServerInboundHandler;
 
 public class HttpServer {
     public static final Logger logger = LogManager.getLogger(HttpServer.class);
@@ -44,7 +45,7 @@ public class HttpServer {
                             ch.pipeline().addLast("decoder", new HttpRequestDecoder())
                                     .addLast("encoder", new HttpResponseEncoder())
                                     .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                                    .addLast("handler", new HttpServerHandler());
+                                    .addLast("handler", new HttpServerInboundHandler());
                         }
                     });
             Channel ch = b.bind(port).sync().channel();
