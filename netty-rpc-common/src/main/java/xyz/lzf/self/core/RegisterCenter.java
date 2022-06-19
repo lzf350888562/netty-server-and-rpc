@@ -5,6 +5,8 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
+import xyz.lzf.self.balance.LoadBalance;
+import xyz.lzf.self.balance.RoundLoadBalance;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -12,16 +14,17 @@ import java.util.List;
 public class RegisterCenter{
 
     private CuratorFramework client;
+    private LoadBalance loadBalance = new RoundLoadBalance();
 
     private static final String ROOT_PATH = "NettyRPC";
     private static final String ZK_ADDR = "120.79.67.1:2181";   // todo need to hide when push
+
 
     public RegisterCenter(){
         RetryPolicy policy = new ExponentialBackoffRetry(1000, 3);
         this.client = CuratorFrameworkFactory.builder().connectString(ZK_ADDR)
                 .sessionTimeoutMs(40000).retryPolicy(policy).namespace(ROOT_PATH).build();
         this.client.start();
-        System.out.println("zookeeper 连接成功");
     }
 
     public void register(String serviceName, InetSocketAddress serverAddress){
@@ -44,8 +47,9 @@ public class RegisterCenter{
     public InetSocketAddress serviceDiscovery(String serviceName) {
         try {
             List<String> strings = client.getChildren().forPath("/" + serviceName);
-            String string = strings.get(0);
-            return parseAddress(string);
+            String balance = loadBalance.balance(strings);
+            System.out.println("本次负载均衡使用的服务为" + balance);
+            return parseAddress(balance);
         } catch (Exception e) {
             e.printStackTrace();//todo
         }
@@ -61,5 +65,13 @@ public class RegisterCenter{
     private InetSocketAddress parseAddress(String address) {
         String[] result = address.split(":");
         return new InetSocketAddress(result[0], Integer.parseInt(result[1]));
+    }
+
+    public LoadBalance getLoadBalance() {
+        return loadBalance;
+    }
+
+    public void setLoadBalance(LoadBalance loadBalance) {
+        this.loadBalance = loadBalance;
     }
 }

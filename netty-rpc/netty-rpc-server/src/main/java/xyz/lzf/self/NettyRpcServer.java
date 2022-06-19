@@ -15,13 +15,23 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import xyz.lzf.self.handler.NettyRpcChannelHandler;
 import xyz.lzf.self.route.ServerRouter;
+import xyz.lzf.self.service.impl.DeptServiceImpl;
+import xyz.lzf.self.service.impl.UserServiceImpl;
 
+/**
+ * dubbo好像是消费者定时从注册中心拉取可用服务列表缓存, 即使注册中心不可用, 服务也可以调用
+ * 这里简化将服务器与服务提供者放在一起, 服务器开放一个端口SERVER_PORT, 启动前注册自己的服务到zk
+ * 可启动多个NettyRpcServer, 然后开启客户端调用
+ */
 public class NettyRpcServer {
 
-    private static final int SERVER_PORT = 8080;
+    private static final int SERVER_PORT = 8080; //这里可以修改端口启动多个尝试
 
     public static void main(String[] args) {
-        ServerRouter serverRouter = new ServerRouter("120.79.67.1", 2181);
+        ServerRouter serverRouter = new ServerRouter("localhost", SERVER_PORT);
+        // 注册几个服务
+        registerServices(serverRouter);
+
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
@@ -57,5 +67,10 @@ public class NettyRpcServer {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
         }
+    }
+
+    private static void registerServices(ServerRouter serverRouter) {
+        serverRouter.provideServiceInterface(new UserServiceImpl());
+        serverRouter.provideServiceInterface(new DeptServiceImpl());
     }
 }

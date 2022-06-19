@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Dept implements Serializable {
     private Integer id;
-    private Integer deptName;
+    private String deptName;
     private String desc;
 
     public Integer getId() {
@@ -15,11 +15,11 @@ public class Dept implements Serializable {
         this.id = id;
     }
 
-    public Integer getDeptName() {
+    public String getDeptName() {
         return deptName;
     }
 
-    public void setDeptName(Integer deptName) {
+    public void setDeptName(String deptName) {
         this.deptName = deptName;
     }
 

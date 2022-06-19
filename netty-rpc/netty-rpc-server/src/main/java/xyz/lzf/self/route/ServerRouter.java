@@ -22,7 +22,6 @@ public class ServerRouter {
     }
 
     public void provideServiceInterface(Object service){
-        String serviceName = service.getClass().getName();
         Class<?>[] interfaces = service.getClass().getInterfaces();
 
         for(Class clazz : interfaces){

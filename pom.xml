@@ -12,7 +12,6 @@
         <module>netty-httpserver</module>
         <module>netty-rpc</module>
         <module>netty-rpc-common</module>
-        <module>netty-rpc-client</module>
     </modules>
 
     <dependencies>
