@@ -1,13 +1,11 @@
-package xyz.lzf.self.handler.request.impl;
+package xyz.lzf.self.proxy.request.impl;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.lzf.self.handler.HttpServerInboundHandler;
-import xyz.lzf.self.handler.request.RequestHandler;
+import xyz.lzf.self.proxy.request.RequestHandler;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +17,7 @@ public class GetRequestHandler implements RequestHandler {
     @Override
     public Object handle(FullHttpRequest fullHttpRequest) {
         String requestUri = fullHttpRequest.uri();
-        logger.info("deal GET request uri :[ {} ]", requestUri);
+        logger.info("deal with GET request uri :[ {} ]", requestUri);
         Map<String, String> queryParameterMappings = this.getQueryParams(requestUri);
         return queryParameterMappings.toString();
     }

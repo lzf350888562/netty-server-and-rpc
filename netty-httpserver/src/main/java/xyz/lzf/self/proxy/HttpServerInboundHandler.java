@@ -1,4 +1,4 @@
-package xyz.lzf.self.handler;
+package xyz.lzf.self.proxy;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -8,8 +8,8 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.lzf.self.handler.request.RequestHandler;
-import xyz.lzf.self.handler.request.RequestHandlerFactory;
+import xyz.lzf.self.proxy.request.RequestHandler;
+import xyz.lzf.self.proxy.request.RequestHandlerFactory;
 
 import java.nio.charset.StandardCharsets;
 
@@ -32,7 +32,7 @@ public class HttpServerInboundHandler extends SimpleChannelInboundHandler<FullHt
     private AsciiString CONTENT_LENGTH = AsciiString.cached("Content-Length");
 
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-        logger.info("Handle http request:{}", msg);
+        logger.info("Handle http request:\n{}", msg);
         String uri = msg.uri();
         if (uri.equals(faviconIco)) {
             return;
@@ -65,13 +65,13 @@ public class HttpServerInboundHandler extends SimpleChannelInboundHandler<FullHt
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        logger.error("Http server channel handler error : ", cause);
+        logger.info("Http server channel handler error : ", cause);
         ctx.close();
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-        logger.error("Http server channel handler deal complete! ");
+        logger.info("Http server channel handler deal complete! ");
         ctx.flush();
     }
 }

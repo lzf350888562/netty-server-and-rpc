@@ -1,10 +1,10 @@
-package xyz.lzf.self.handler.request;
+package xyz.lzf.self.proxy.request;
 
 import io.netty.handler.codec.http.HttpMethod;
-import xyz.lzf.self.handler.request.impl.DeleteRequestHandler;
-import xyz.lzf.self.handler.request.impl.GetRequestHandler;
-import xyz.lzf.self.handler.request.impl.PostRequestHandler;
-import xyz.lzf.self.handler.request.impl.PutRequestHandler;
+import xyz.lzf.self.proxy.request.impl.DeleteRequestHandler;
+import xyz.lzf.self.proxy.request.impl.GetRequestHandler;
+import xyz.lzf.self.proxy.request.impl.PostRequestHandler;
+import xyz.lzf.self.proxy.request.impl.PutRequestHandler;
 
 import java.util.HashMap;
 import java.util.Map;

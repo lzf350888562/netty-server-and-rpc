@@ -1,4 +1,4 @@
-package xyz.lzf.self.handler.request;
+package xyz.lzf.self.proxy.request;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 

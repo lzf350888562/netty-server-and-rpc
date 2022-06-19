@@ -15,12 +15,34 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.lzf.self.handler.HttpServerInboundHandler;
+import xyz.lzf.self.proxy.HttpServerInboundHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class HttpServer {
     public static final Logger logger = LogManager.getLogger(HttpServer.class);
 
+
     private int port = 8080;
+
+    public HttpServer() {
+        // 要加 '/' 否则无法读取, 见注释
+        InputStream is = HttpServer.class.getResourceAsStream("/web.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(is);
+            this.port = Integer.parseInt((String)properties.get("server.port")) ;
+        } catch (IOException e) {
+            logger.warn("see invalid property 'server.port' in 'web.properties'. use default port on 8080");
+            this.port = 8080;
+        }
+    }
+
+    public HttpServer(int port) {
+        this.port = port;
+    }
 
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -36,13 +58,15 @@ public class HttpServer {
                     // 等待处理的客户端连接请求大小
                     .option(ChannelOption.SO_BACKLOG, 128)
                     // 设置父类AbstractBootstrap的handler属性
-                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .handler( new LoggingHandler(LogLevel.INFO))
                     // 设置当前类ServerBootstrap的childHandler属性
                     // 给Channel设置handler
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast("decoder", new HttpRequestDecoder())
+                            ch.pipeline()
+//                                    .addLast("logging", new LoggingHandler(LogLevel.INFO))
+                                    .addLast("decoder", new HttpRequestDecoder())
                                     .addLast("encoder", new HttpResponseEncoder())
                                     .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
                                     .addLast("handler", new HttpServerInboundHandler());
