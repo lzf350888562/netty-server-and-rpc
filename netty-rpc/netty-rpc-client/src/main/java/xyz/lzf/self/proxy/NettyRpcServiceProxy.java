@@ -7,6 +7,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.codec.serialization.ClassResolver;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
@@ -78,7 +81,7 @@ public class NettyRpcServiceProxy implements InvocationHandler {
                             // 计算当前待发送消息的长度，写入到前4个字节中
                             pipeline.addLast(new LengthFieldPrepender(4));
 
-                            // todo JDK序列化 效率很差
+                            // todo JDK序列化 效率很差 后面可以考虑替换为Protobuf
                             pipeline.addLast(new ObjectEncoder());
                             pipeline.addLast(new ObjectDecoder(new ClassResolver() {
                                 @Override
@@ -86,7 +89,7 @@ public class NettyRpcServiceProxy implements InvocationHandler {
                                     return Class.forName(className);
                                 }
                             }));
-                            // 核心, 从负载均衡中心拉取服务
+                            // 核心, rpc调用服务器接口
                             pipeline.addLast(new ClientChannelHandler());
                         }
                     });

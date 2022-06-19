@@ -47,7 +47,7 @@ public class NettyRpcServer {
                             // 计算当前待发送消息的长度，写入到前4个字节中
                             pipeline.addLast(new LengthFieldPrepender(4));
 
-                            // todo
+                           // todo JDK序列化 效率很差 后面可以考虑替换为Protobuf
                             pipeline.addLast(new ObjectEncoder());
                             pipeline.addLast(new ObjectDecoder(new ClassResolver() {
                                 @Override
