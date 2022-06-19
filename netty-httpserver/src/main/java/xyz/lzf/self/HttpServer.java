@@ -13,8 +13,8 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.proxy.HttpServerInboundHandler;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class HttpServer {
-    public static final Logger logger = LogManager.getLogger(HttpServer.class);
+    public static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
 
     private int port = 8080;

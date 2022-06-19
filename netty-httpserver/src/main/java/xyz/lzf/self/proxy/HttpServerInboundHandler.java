@@ -6,8 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.proxy.request.RequestHandler;
 import xyz.lzf.self.proxy.request.RequestHandlerFactory;
 
@@ -23,7 +23,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * 查看ChannelInboundHandlerAdapter注释, 选择自动释放消息的SimpleChannelInboundHandler
  */
 public class HttpServerInboundHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    public static final Logger logger = LogManager.getLogger(HttpServerInboundHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(HttpServerInboundHandler.class);
 
     private String faviconIco = "/favicon.ico";
     private AsciiString CONNECTION = AsciiString.cached("Connection");

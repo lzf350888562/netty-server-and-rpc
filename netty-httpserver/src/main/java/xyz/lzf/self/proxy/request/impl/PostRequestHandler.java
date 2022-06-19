@@ -2,14 +2,14 @@ package xyz.lzf.self.proxy.request.impl;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.proxy.request.RequestHandler;
 
 import java.nio.charset.StandardCharsets;
 
 public class PostRequestHandler implements RequestHandler {
-    public static final Logger logger = LogManager.getLogger(PostRequestHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(PostRequestHandler.class);
 
     @Override
     public Object handle(FullHttpRequest fullHttpRequest) {

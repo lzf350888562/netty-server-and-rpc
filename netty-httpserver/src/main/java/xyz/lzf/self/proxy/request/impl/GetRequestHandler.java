@@ -2,8 +2,8 @@ package xyz.lzf.self.proxy.request.impl;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.proxy.request.RequestHandler;
 
 import java.nio.charset.StandardCharsets;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GetRequestHandler implements RequestHandler {
-    public static final Logger logger = LogManager.getLogger(GetRequestHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(GetRequestHandler.class);
 
     @Override
     public Object handle(FullHttpRequest fullHttpRequest) {

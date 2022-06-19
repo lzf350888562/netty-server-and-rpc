@@ -3,15 +3,18 @@ package xyz.lzf.self.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.http.Response;
 
 /**
  * 选择ChannelHandler的自动释放消息的SimpleChannelInboundHandler子类
  */
 public class ClientChannelHandler extends SimpleChannelInboundHandler<Response> {
+    public static final Logger logger = LoggerFactory.getLogger(ClientChannelHandler.class);
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Response msg) throws Exception {
-        // 接收到response, 给channel设计别名，让sendRequest里读取response
+        logger.info("receive msg. save to channel attribute 'RPCResponse'");
         AttributeKey<Response> key = AttributeKey.valueOf("RPCResponse");
         ctx.channel().attr(key).set(msg);
         ctx.channel().close();
@@ -19,7 +22,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Response> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        logger.info("ChannelHandlerContext error : ", cause);
         ctx.close();
     }
 }

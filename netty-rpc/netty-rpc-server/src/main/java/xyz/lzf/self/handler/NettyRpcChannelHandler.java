@@ -2,7 +2,8 @@ package xyz.lzf.self.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import xyz.lzf.self.core.RegisterCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.http.Request;
 import xyz.lzf.self.http.Response;
 import xyz.lzf.self.route.ServerRouter;
@@ -11,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class NettyRpcChannelHandler extends SimpleChannelInboundHandler<Request> {
+    Logger logger = LoggerFactory.getLogger(NettyRpcChannelHandler.class);
 
     private ServerRouter serverRouter;
 
@@ -23,11 +25,12 @@ public class NettyRpcChannelHandler extends SimpleChannelInboundHandler<Request>
         Response response = getResponse(msg);
         ctx.writeAndFlush(response);
         ctx.close();
+        logger.info("receive request, send response");
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        logger.info("ChannelHandlerContext error : ", cause);
         ctx.close();
     }
 

@@ -30,6 +30,8 @@ import java.net.InetSocketAddress;
 public class NettyRpcServiceProxy implements InvocationHandler {
 
     private RegisterCenter registerCenter;
+    private Bootstrap bootstrap;
+    private EventLoopGroup eventLoopGroup;
 
     public NettyRpcServiceProxy() {
         this.registerCenter = new RegisterCenter();
@@ -59,8 +61,6 @@ public class NettyRpcServiceProxy implements InvocationHandler {
     }
 
     private Response sendRequest(Request request) {
-        Bootstrap bootstrap;
-        EventLoopGroup eventLoopGroup;
         InetSocketAddress address = registerCenter.serviceDiscovery(request.getInterfaceName());
         String host = address.getHostName();
         int port = address.getPort();
@@ -78,7 +78,7 @@ public class NettyRpcServiceProxy implements InvocationHandler {
                             // 计算当前待发送消息的长度，写入到前4个字节中
                             pipeline.addLast(new LengthFieldPrepender(4));
 
-                            // todo
+                            // todo JDK序列化 效率很差
                             pipeline.addLast(new ObjectEncoder());
                             pipeline.addLast(new ObjectDecoder(new ClassResolver() {
                                 @Override
@@ -92,13 +92,10 @@ public class NettyRpcServiceProxy implements InvocationHandler {
                     });
             ChannelFuture channelFuture  = bootstrap.connect(host, port).sync();
             Channel channel = channelFuture.channel();
-            // 发送数据
             channel.writeAndFlush(request);
             channel.closeFuture().sync();
-            // 获取channel中的消息
             AttributeKey<Response> key = AttributeKey.valueOf("RPCResponse");
             Response response = channel.attr(key).get();
-
             return response;
         } catch (InterruptedException e) {
             // log todo
