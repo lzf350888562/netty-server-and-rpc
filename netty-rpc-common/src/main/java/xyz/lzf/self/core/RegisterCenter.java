@@ -17,7 +17,7 @@ public class RegisterCenter{
     private LoadBalance loadBalance = new RoundLoadBalance();
 
     private static final String ROOT_PATH = "NettyRPC";
-    private static final String ZK_ADDR = "xxx:2181";   // todo need to hide when push
+    private static final String ZK_ADDR = "120.79.67.1:2181";   // todo need to hide when push
 
 
     public RegisterCenter(){
