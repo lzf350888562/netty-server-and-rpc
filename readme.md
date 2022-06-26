@@ -7,7 +7,7 @@ https://www.cnblogs.com/rickiyang/p/12904552.html
 
 修改不同的端口, 启动多个服务端, 查看zk效果如下:
 
-![](.assets/uTools_1655641505505.png)
+![](.assets/uTools_1655641505505.jpg)
 
 启动一个客户端, 多次调用同一个接口, 测试负载均衡:
 

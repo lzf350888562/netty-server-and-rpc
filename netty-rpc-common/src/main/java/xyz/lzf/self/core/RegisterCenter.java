@@ -5,6 +5,8 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.lzf.self.balance.LoadBalance;
 import xyz.lzf.self.balance.RoundLoadBalance;
 
@@ -12,6 +14,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 public class RegisterCenter{
+    public static final Logger logger = LoggerFactory.getLogger(RegisterCenter.class);
 
     private CuratorFramework client;
     private LoadBalance loadBalance = new RoundLoadBalance();
@@ -30,11 +33,14 @@ public class RegisterCenter{
     public void register(String serviceName, InetSocketAddress serverAddress){
         try {
             if(client.checkExists().forPath("/" + serviceName) == null){
+                logger.info("first meet service {}. add thr persistent path", serviceName);
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/" + serviceName);
             }
             String path = "/" + serviceName +"/"+ getServiceAddress(serverAddress);
             client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
+            logger.info("add a node [{}] to service {}", path, serviceName);
         } catch (Exception e) {
+            logger.info("register error", e);
         }
     }
 
@@ -47,12 +53,12 @@ public class RegisterCenter{
         try {
             List<String> strings = client.getChildren().forPath("/" + serviceName);
             String balance = loadBalance.balance(strings);
-            System.out.println("本次负载均衡使用的服务为" + balance);
+            logger.info("current loadBalance choose node : {}", balance);
             return parseAddress(balance);
         } catch (Exception e) {
-            e.printStackTrace();//todo
+            logger.info("service discovery error : {} . return null", serviceName);
+            return null;
         }
-        return null;
     }
 
     private String getServiceAddress(InetSocketAddress serverAddress) {
